@@ -28,7 +28,7 @@ class Identifier_method:
                 new_line, self.__equal_brackets_count(text))
 
     def __equal_brackets_count(self, text):
-        """Verifica que la cantidad de llaves de apertura se la misma que las de cierre
+        """Verifica que la cantidad de llaves que abren, cierran
       
                """
         return text.count("{") - text.count("}") == 0
