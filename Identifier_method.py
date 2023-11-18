@@ -1,4 +1,3 @@
-import VariableTypes
 
 
 def __equal_brackets_count(text):
