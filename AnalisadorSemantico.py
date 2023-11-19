@@ -190,6 +190,30 @@ class AnalizadorSemantico:
         else:
             pass
 
+    def analizar_declaracion(self, tokens, num_linea):
+        """
+        Funcion para analizar una declaracion dentro de linea de codigo
+
+        Args:
+            tokens (_type_): _description_
+            num_linea (_type_): _description_
+        """
+        identificador = tokens[1]
+        if self.tabla_simbolos.buscar(identificador):
+            self.errores.append(
+                f"Error – Línea {num_linea}: '{identificador}' ya está declarado."
+            )
+        else:
+            # Verifica si el tipo de datos es valido (solo se verifican 'int', 'float', y 'string')
+            if tokens[0] not in tipos_validos:
+                self.errores.append(
+                    f"Error – Línea {num_linea}: Tipo de dato no válido."
+                )
+            else:
+                self.tabla_simbolos.insertar(
+                    identificador, {"tipo": tokens[0], "linea": num_linea}
+                )
+
     def analizar_llamada(self, tokens, line_number):
         self.tabla_simbolos.insertar(
             "statement", {"tipo": "call", "valor": tokens[0], "linea": line_number}
