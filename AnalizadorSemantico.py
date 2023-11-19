@@ -32,7 +32,45 @@ class AnalizadorSemantico:
         else:
             for error in self.errores:
                 print(error)
+    
+    def _analizar_codigo(self, linea, num_linea):
+        """
+        Funcion para analizar una linea de codigo
 
+        Args:
+            linea (_type_): _description_
+            num_linea (_type_): _description_
+        """
+        tokens = linea.split()
+
+        if tokens:
+            palabra_clave = tokens[0]
+
+            if (palabra_clave in tipos_validos + ["void"]) and (
+                    "(" and ")" and "{"
+            ) in linea:
+                self.analizar_funcion(tokens, num_linea)
+
+            elif palabra_clave in ["if", "while"] and ("(" and ")" and "{") in linea:
+                self.tabla_simbolos.insertar(
+                    palabra_clave, {"tipo": "condicion/ciclo", "linea": num_linea}
+                )
+                self.analizar_condicion(
+                    tokens[tokens.index("(") + 1: tokens.index(")")], num_linea
+                )
+
+            elif palabra_clave in tipos_validos and not "=" in linea:
+                self.analizar_declaracion(tokens, num_linea)
+
+            elif "=" in linea:
+                self.analizar_asignacion(tokens, num_linea)
+
+            elif palabra_clave == "return":
+                self.analizar_llamada(tokens, num_linea)
+
+            else:
+                self.analizar_linea(tokens, num_linea)
+    
     def analizar_asignacion(self, tokens, num_linea):
         """
         Funcion para analizar una asignacion en linea de codigo
@@ -80,7 +118,7 @@ class AnalizadorSemantico:
                     identificador,
                     {"tipo": tokens[0], "valor": valor, "linea": num_linea},
                 )
-
+    
     def analizar_condicion(self, tokens_condicion, num_linea):
         """
         Funcion para analizar una condicion dentro de linea de codigo
@@ -120,7 +158,7 @@ class AnalizadorSemantico:
                             token, {"tipo": "float", "valor": token, "linea": num_linea}
                         )
 
-                elif self.validar_identificador(token) is None:
+                elif self.validar_identificador(token) == None:
                     self.errores.append(
                         f"Error – Línea {num_linea}: '{token}' no es argumento válido."
                     )
@@ -214,6 +252,49 @@ class AnalizadorSemantico:
                     identificador, {"tipo": tokens[0], "linea": num_linea}
                 )
 
+    def analizar_funcion(self, tokens, num_linea):
+        """
+        Funcion para analizar una funcion en linea de codigo
+
+        Args:
+            tokens (_type_): _description_
+            num_linea (_type_): _description_
+        """
+        identificador = tokens[1]
+        if self.tabla_simbolos.buscar(identificador):
+            self.errores.append(
+                f"Error – Línea {num_linea}: '{identificador}' ya está declarado."
+            )
+        else:
+            self.tabla_simbolos.insertar(
+                identificador, {"tipo": tokens[0], "funcion": True, "linea": num_linea}
+            )
+
+            # Manejo de parametros
+            params_inicio = tokens.index("(")
+            params_fin = tokens.index(")")
+            if "," in tokens:
+                params_separador = tokens.index(",")
+                parametros = (
+                        tokens[params_inicio + 1: params_separador]
+                        + tokens[params_separador + 1: params_fin]
+                )
+            else:
+                parametros = tokens[params_inicio + 1: params_fin]
+
+            for i in range(0, len(parametros) - 1, 2):
+                tipo_param = parametros[i]
+                param = parametros[i + 1]
+                if param.isalnum():
+                    self.tabla_simbolos.insertar(
+                        param,
+                        {"tipo": tipo_param, "parametro": True, "linea": num_linea},
+                    )
+                else:
+                    self.errores.append(
+                        f"Error – Línea {num_linea}: Nombre de parámetro inválido."
+                    )
+
     def analizar_llamada(self, tokens, line_number):
         self.tabla_simbolos.insertar(
             "statement", {"tipo": "call", "valor": tokens[0], "linea": line_number}
@@ -247,7 +328,7 @@ class AnalizadorSemantico:
 
         for token in tokens:
             if token.isalnum():
-                if self.validar_identificador(token) is "string":  # analiza si el token es de tipo string
+                if self.validar_identificador(token) == "string":  # analiza si el token es de tipo string
                     if self.tabla_simbolos.buscar(token):
                         pass
                     else:
@@ -272,14 +353,14 @@ class AnalizadorSemantico:
                             token, {"tipo": "float", "valor": token, "linea": line_number}
                         )
 
-                elif self.validar_identificador(token) is None:  # analiza si el es o no identificador valido sino
+                elif self.validar_identificador(token) is None: # analiza si el es o no identificador valido sino
                     # genera un error
                     self.errores.append(
                         f"Error – Línea {line_number}: '{token}' no es argumento válido."
                     )
                     return
 
-            if token in arit_ops:  # analiza si el token es o no, operador aritmetico
+            if token in arit_ops: # analiza si el token es o no, operador aritmetico
                 if self.tabla_simbolos.buscar(token):
                     pass
                 else:
@@ -303,10 +384,10 @@ class AnalizadorSemantico:
                         token, {"tipo operador": "logico", "linea": line_number}
                     )
 
-            elif token in [";", "}"]:  # si el token es ";", "}" no hace nada
+            elif token in [";", "}"]: # si el token es ";", "}" no hace nada
                 pass
 
-            elif not self.tabla_simbolos.buscar(token):  # analiza si el token no esta en la tabla, genera un error
+            elif not self.tabla_simbolos.buscar(token): # analiza si el token no esta en la tabla, genera un error
                 self.errores.append(
                     f"Error – Línea {line_number}: '{token}' es argumento inválido."
                 )
