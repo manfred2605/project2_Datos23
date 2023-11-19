@@ -214,6 +214,49 @@ class AnalizadorSemantico:
                     identificador, {"tipo": tokens[0], "linea": num_linea}
                 )
 
+    def analizar_funcion(self, tokens, num_linea):
+        """
+        Funcion para analizar una funcion en linea de codigo
+
+        Args:
+            tokens (_type_): _description_
+            num_linea (_type_): _description_
+        """
+        identificador = tokens[1]
+        if self.tabla_simbolos.buscar(identificador):
+            self.errores.append(
+                f"Error – Línea {num_linea}: '{identificador}' ya está declarado."
+            )
+        else:
+            self.tabla_simbolos.insertar(
+                identificador, {"tipo": tokens[0], "funcion": True, "linea": num_linea}
+            )
+
+            # Manejo de parametros
+            params_inicio = tokens.index("(")
+            params_fin = tokens.index(")")
+            if "," in tokens:
+                params_separador = tokens.index(",")
+                parametros = (
+                        tokens[params_inicio + 1: params_separador]
+                        + tokens[params_separador + 1: params_fin]
+                )
+            else:
+                parametros = tokens[params_inicio + 1: params_fin]
+
+            for i in range(0, len(parametros) - 1, 2):
+                tipo_param = parametros[i]
+                param = parametros[i + 1]
+                if param.isalnum():
+                    self.tabla_simbolos.insertar(
+                        param,
+                        {"tipo": tipo_param, "parametro": True, "linea": num_linea},
+                    )
+                else:
+                    self.errores.append(
+                        f"Error – Línea {num_linea}: Nombre de parámetro inválido."
+                    )
+
     def analizar_llamada(self, tokens, line_number):
         self.tabla_simbolos.insertar(
             "statement", {"tipo": "call", "valor": tokens[0], "linea": line_number}
