@@ -1,6 +1,4 @@
 import AnalizadorSemantico as AS
-
-
 # import Identifier_method
 
 
@@ -36,7 +34,7 @@ def imprimir_tabla(tabla_simb):
 if __name__ == "__main__":
     analizador = AS.AnalizadorSemantico()
 
-    main('code1.txt', analizador)
+    main('code2.txt', analizador)
 
     print("\n")
 

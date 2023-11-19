@@ -158,7 +158,7 @@ class AnalizadorSemantico:
                             token, {"tipo": "float", "valor": token, "linea": num_linea}
                         )
 
-                elif self.validar_identificador(token) == None:
+                elif self.validar_identificador(token) is None:
                     self.errores.append(
                         f"Error – Línea {num_linea}: '{token}' no es argumento válido."
                     )
