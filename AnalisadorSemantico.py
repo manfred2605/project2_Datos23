@@ -42,3 +42,22 @@ class AnalizadorSemantico:
             self.errores.append(
                 f"Error – Línea {num_linea}: Argumentos inválidos en llamada {tokens[0]}."
             )
+
+    def validar_identificador(self, identificador):
+        """
+        _summary_
+
+        Args:
+            identificador (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        if identificador.isalpha():
+            return "string"
+        elif identificador.isnumeric():
+            return "int"
+        elif identificador.isalnum() and identificador.replace(".", "", 1).isdigit():
+            return "float"
+        else:
+            return None
