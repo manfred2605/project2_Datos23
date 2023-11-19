@@ -1,0 +1,7 @@
+std::string es_mayor(int x) {
+    if (x >= 10) {
+        return "es mayor";
+    } else {
+        return "es menor";
+    }
+}
