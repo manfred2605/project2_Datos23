@@ -15,6 +15,24 @@ class AnalizadorSemantico:
         self.tabla_simbolos = TB.TablaSimbolos()
         self.errores = []
 
+    def analizar_codigo(self, codigo):
+        """
+        Wrapper para funcion _analizar_codigo
+
+        Args:
+            codigo (_type_): _description_
+        """
+        lineas = codigo.split("\n")
+
+        for num_linea, linea in enumerate(lineas, 1):
+            self._analizar_codigo(linea, num_linea)
+
+        if not self.errores:
+            print("El código fuente es correcto.")
+        else:
+            for error in self.errores:
+                print(error)
+
     def analizar_llamada(self, tokens, num_linea):
         self.tabla_simbolos.insertar(
             "statement", {"tipo": "call", "valor": tokens[0], "linea": num_linea}
