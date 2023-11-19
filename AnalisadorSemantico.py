@@ -33,14 +33,14 @@ class AnalizadorSemantico:
             for error in self.errores:
                 print(error)
 
-    def analizar_llamada(self, tokens, num_linea):
+    def analizar_llamada(self, tokens, line_number):
         self.tabla_simbolos.insertar(
-            "statement", {"tipo": "call", "valor": tokens[0], "linea": num_linea}
+            "statement", {"tipo": "call", "valor": tokens[0], "linea": line_number}
         )
 
-        if self.analizar_linea(tokens[1:], num_linea) != None:
+        if self.analizar_linea(tokens[1:], line_number) is not None:
             self.errores.append(
-                f"Error – Línea {num_linea}: Argumentos inválidos en llamada {tokens[0]}."
+                f"Error – Línea {line_number}: Argumentos inválidos en llamada {tokens[0]}."
             )
 
     def validar_identificador(self, identificador):
@@ -61,3 +61,72 @@ class AnalizadorSemantico:
             return "float"
         else:
             return None
+
+    def analizar_linea(self, tokens, line_number):
+
+        for token in tokens:
+            if token.isalnum():
+                if self.validar_identificador(token) == "string":  # analiza si el token es de tipo string
+                    if self.tabla_simbolos.buscar(token):
+                        pass
+                    else:
+                        self.tabla_simbolos.insertar(
+                            token,
+                            {"tipo": "string", "valor": f"{token}", "linea": line_number},
+                        )
+
+                if self.validar_identificador(token) == "int":  # analiza si el token es de tipo int
+                    if self.tabla_simbolos.buscar(token):
+                        pass
+                    else:
+                        self.tabla_simbolos.insertar(
+                            token, {"tipo": "int", "valor": token, "linea": line_number}
+                        )
+
+                if self.validar_identificador(token) == "float":  # analiza si el token es de tipo float
+                    if self.tabla_simbolos.buscar(token):
+                        pass
+                    else:
+                        self.tabla_simbolos.insertar(
+                            token, {"tipo": "float", "valor": token, "linea": line_number}
+                        )
+
+                elif self.validar_identificador(token) is None: # analiza si el es o no identificador valido sino
+                    # genera un error
+                    self.errores.append(
+                        f"Error – Línea {line_number}: '{token}' no es argumento válido."
+                    )
+                    return
+
+            if token in arit_ops: # analiza si el token es o no, operador aritmetico
+                if self.tabla_simbolos.buscar(token):
+                    pass
+                else:
+                    self.tabla_simbolos.insertar(
+                        token, {"tipo operador": "aritmetico", "linea": line_number}
+                    )
+
+            if token in comp_ops:  # analiza si el token es o no, un operador de comparacion
+                if self.tabla_simbolos.buscar(token):
+                    pass
+                else:
+                    self.tabla_simbolos.insertar(
+                        token, {"tipo operador": "comparacion", "linea": line_number}
+                    )
+
+            if token in logic_ops:  # analiza si el token es o no, un operador logico
+                if self.tabla_simbolos.buscar(token):
+                    pass
+                else:
+                    self.tabla_simbolos.insertar(
+                        token, {"tipo operador": "logico", "linea": line_number}
+                    )
+
+            elif token in [";", "}"]: # si el token es ";", "}" no hace nada
+                pass
+
+            elif not self.tabla_simbolos.buscar(token): # analiza si el token no esta en la tabla, genera un error
+                self.errores.append(
+                    f"Error – Línea {line_number}: '{token}' es argumento inválido."
+                )
+                return
