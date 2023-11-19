@@ -33,6 +33,44 @@ class AnalizadorSemantico:
             for error in self.errores:
                 print(error)
     
+    def _analizar_codigo(self, linea, num_linea):
+        """
+        Funcion para analizar una linea de codigo
+
+        Args:
+            linea (_type_): _description_
+            num_linea (_type_): _description_
+        """
+        tokens = linea.split()
+
+        if tokens:
+            palabra_clave = tokens[0]
+
+            if (palabra_clave in tipos_validos + ["void"]) and (
+                    "(" and ")" and "{"
+            ) in linea:
+                self.analizar_funcion(tokens, num_linea)
+
+            elif palabra_clave in ["if", "while"] and ("(" and ")" and "{") in linea:
+                self.tabla_simbolos.insertar(
+                    palabra_clave, {"tipo": "condicion/ciclo", "linea": num_linea}
+                )
+                self.analizar_condicion(
+                    tokens[tokens.index("(") + 1: tokens.index(")")], num_linea
+                )
+
+            elif palabra_clave in tipos_validos and not "=" in linea:
+                self.analizar_declaracion(tokens, num_linea)
+
+            elif "=" in linea:
+                self.analizar_asignacion(tokens, num_linea)
+
+            elif palabra_clave == "return":
+                self.analizar_llamada(tokens, num_linea)
+
+            else:
+                self.analizar_linea(tokens, num_linea)
+    
     def analizar_asignacion(self, tokens, num_linea):
         """
         Funcion para analizar una asignacion en linea de codigo
