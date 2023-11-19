@@ -33,6 +33,53 @@ class AnalizadorSemantico:
             for error in self.errores:
                 print(error)
     
+    def analizar_asignacion(self, tokens, num_linea):
+        """
+        Funcion para analizar una asignacion en linea de codigo
+
+        Args:
+            tokens (_type_): _description_
+            num_linea (_type_): _description_
+        """
+        identificador = tokens[1]
+        if self.tabla_simbolos.buscar(identificador):
+            self.errores.append(
+                f"Error – Línea {num_linea}: '{identificador}' ya está declarado."
+            )
+        else:
+            tipo_identificador = tokens[0]
+
+            # Verifica los tipos de datos dentro de la asignacion
+            if tokens[2] == "=":
+                valor = tokens[3]
+
+                if tipo_identificador == "int" and not valor.isdigit():
+                    self.errores.append(
+                        f"Error – Línea {num_linea}: Asignación inválida para '{identificador}'."
+                    )
+                    return
+
+                elif (
+                        tipo_identificador == "float"
+                        and not valor.replace(".", "", 1).isdigit()
+                ):
+                    self.errores.append(
+                        f"Error – Línea {num_linea}: Asignación inválida para '{identificador}'."
+                    )
+                    return
+
+                elif tipo_identificador == "string" and not (
+                        valor.startswith('"') and valor.endswith('"')
+                ):
+                    self.errores.append(
+                        f"Error – Línea {num_linea}: Asignación inválida para '{identificador}'."
+                    )
+                    return
+
+                self.tabla_simbolos.insertar(
+                    identificador,
+                    {"tipo": tokens[0], "valor": valor, "linea": num_linea},
+                )
     
     def analizar_condicion(self, tokens_condicion, num_linea):
         """
