@@ -34,7 +34,7 @@ def imprimir_tabla(tabla_simb):
 if __name__ == "__main__":
     analizador = AS.AnalizadorSemantico()
 
-    main('code2.txt', analizador)
+    main('code1.txt', analizador)
 
     print("\n")
 
