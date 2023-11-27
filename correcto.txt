@@ -5,7 +5,7 @@ string nombre
 nombre = "Tigre"
 
 void algo ( int a , string b ) {
-  if ( a = = global ) {
+  if ( a == global ) {
     a = 0
 	string texto
 	texto = nombre
@@ -15,7 +15,8 @@ void algo ( int a , string b ) {
   
   global = 5
   nombre = "Colacho"
-
+  
+  float valor
   valor  = 1.5
 }
 
@@ -30,4 +31,5 @@ while ( global < 10 ) {
   c = global + 10
 }
 
-valor = 2.2
+float valor
+valor = 2.2  

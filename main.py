@@ -34,6 +34,7 @@ def imprimir_tabla(tabla_simb):
 if __name__ == "__main__":
     analizador = AS.AnalizadorSemantico()
 
+    # main('correcto.txt', analizador)
     main('incorrecto.txt', analizador)
 
     print("\n")

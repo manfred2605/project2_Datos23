@@ -6,7 +6,7 @@ nombre = "Tigre"
 
 x = 10   # Error, x no ha sido declarado
 
-void algo( int a , string b ) {
+void algo ( int a , string b ) {
   if ( a == nombre ) {  # Error - no coinciden los tipos
     b = "hola"
 	string texto
@@ -21,7 +21,7 @@ void algo( int a , string b ) {
   valor  = 1.5 # Error - valor no ha sido declarado
 }
 
-int suma ( int a, int b ) {
+int suma ( int a , int b ) {
   int res
   res = a + b
   return "suma"   # Error - no coincide el tipo de retorno
