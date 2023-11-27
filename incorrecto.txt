@@ -1,0 +1,35 @@
+int global
+global = 10
+
+string nombre
+nombre = "Tigre"
+
+x = 10   # Error, x no ha sido declarado
+
+void algo( int a , string b ) {
+  if ( a == nombre ) {  # Error - no coinciden los tipos
+    b = "hola"
+	string texto
+	texto = nombre
+	float valor
+	valor = "malo"   # Error - no coinciden los tipos
+  }
+  
+  global = 5
+  nombre = "Colacho"
+  
+  valor  = 1.5 # Error - valor no ha sido declarado
+}
+
+int suma ( int a, int b ) {
+  int res
+  res = a + b
+  return "suma"   # Error - no coincide el tipo de retorno
+}
+
+while ( global < 10 ) {
+  int c
+  c = global + 10.9 # Error - no coinciden los tipos
+}
+
+res = 14    # Error - res no ha sido declarado

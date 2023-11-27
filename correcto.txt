@@ -1,0 +1,33 @@
+int global
+global = 10
+
+string nombre
+nombre = "Tigre"
+
+void algo ( int a , string b ) {
+  if ( a = = global ) {
+    a = 0
+	string texto
+	texto = nombre
+	float valor
+	valor = 10.5
+  }
+  
+  global = 5
+  nombre = "Colacho"
+
+  valor  = 1.5
+}
+
+int suma ( int a , int b ) {
+  int res
+  res = a + b
+  return res
+}
+
+while ( global < 10 ) {
+  int c
+  c = global + 10
+}
+
+valor = 2.2
